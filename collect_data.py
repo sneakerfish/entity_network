@@ -5,7 +5,8 @@ datapath = "rawdata"
 
 def load_config(configfile):
 	if os.path.exists(configfile):
-		config = pickle.load(configfile)
+		with open(configfile, 'rb') as handle:
+			config = pickle.load(handle)
 	else:
 		config = {}
 	return config
