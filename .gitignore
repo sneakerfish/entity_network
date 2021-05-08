@@ -4,6 +4,7 @@
 rawdata/
 postgresdb/
 graphdata/
+import/
 *jar
 *pickle
 
