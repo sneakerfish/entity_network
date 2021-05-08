@@ -2,7 +2,8 @@
 
 # Project stuff
 rawdata/
-db/
+postgresdb/
+graphdata/
 *jar
 *pickle
 

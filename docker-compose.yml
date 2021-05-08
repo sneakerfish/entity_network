@@ -6,8 +6,27 @@ services:
     restart: always
     shm_size: '2gb'
     volumes:
-      - ./db:/var/lib/postgresql/data
+      - ./postgresdb:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     env_file:
       - database-variables.env
+  graph:
+    image: neo4j:latest
+    restart: unless-stopped
+    environment:
+      - NEO4J_dbms_default__database=news
+      - NEO4J_dbms_security_procedures_unrestricted=apoc.*,algo.*
+      - NEO4J_dbms_security_procedures_whitelist=apoc.*,algo.*
+      - NEO4J_dbms_memory_pagecache_size=4G
+      - NEO4J_dbms_memory_heap_max__size=16G
+      - NEO4J_apoc_import_file_enabled=true
+      - NEO4J_dbms_shell_enabled=true
+      - NEO4JLABS_PLUGINS=["apoc", "graph-data-science"]
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - ./plugins:/plugins
+      - ./graphdata:/data
+      - ./import:/var/lib/neo4j/import
