@@ -42,7 +42,7 @@ def find_entity(entity_name, entity_type, session):
 def process_news_file(filename, session):
     with open(filename) as json_file:
         data = json.load(json_file)
-    if not(data['url']) or check_url(data['url'], session):
+    if not(data['url']) or check_url(data['url'], session) or data['text']=="":
         return False
     print(data['url'])
     entities = find_entities(data['text'])

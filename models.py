@@ -21,6 +21,9 @@ class Entity(Base):
         self.entity_name = ent_name
         self.entity_type = ent_type
 
+    def __repr__(self):
+        print("<Entity: id: {}, name: {}, type: {}>".format(self.id, self.entity_name, self.entity_type))
+
 class NewsItem(Base):
     __tablename__ = 'news_items'
 
@@ -40,3 +43,6 @@ class NewsItem(Base):
         self.title = title
         self.authors = authors
         self.processed = processed
+
+    def __repr__(self):
+        print("<NewsItem: title {}, url: {}>".format(str(self.title)[:30], str(self.url)[:30]))

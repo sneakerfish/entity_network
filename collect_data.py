@@ -16,7 +16,7 @@ def save_config(configfile, config):
                 pickle.dump(config, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 def news_sources():
-        return ['nytimes.com', 'cnn.com', 'bbc.com', 'latimes.com']
+        return ['nytimes.com', 'cnn.com', 'bbc.com', 'latimes.com', 'chicago.suntimes.com', 'startribune.com']
 
 def data_file_name(source):
         dirname = datapath + '/' + source
@@ -43,6 +43,9 @@ def load_more_stories(urls):
                                                   'authors': article.authors, 'url': article.url}
                                 urls[article.url] = 1
                         except:
+                                continue
+                        # If there is no text, then skip this article.
+                        if result_article["text"] == "":
                                 continue
 
                         with open(data_file_name(source), 'w') as outfile:
