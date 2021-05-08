@@ -1,9 +1,11 @@
-# In newer versions, this should be from sqlalchemy.orm import declarative_base
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, ForeignKey, Table
+from sqlalchemy.orm import relationship, declarative_base
 
 Base = declarative_base()
+
+news_item_entities = Table('news_items_entities', Base.metadata,
+                           Column('entity_id', ForeignKey('entities.id'), primary_key=True),
+                           Column('news_item_id', ForeignKey('news_items.id'), primary_key=True))
 
 class Entity(Base):
     __tablename__ = 'entities'
@@ -12,23 +14,29 @@ class Entity(Base):
     entity_name = Column(String)
     entity_type = Column(String)
 
+    news_items = relationship('NewsItem', secondary=news_item_entities,
+                              back_populates='entities')
+
+    def __init__(self, ent_name, ent_type):
+        self.entity_name = ent_name
+        self.entity_type = ent_type
 
 class NewsItem(Base):
     __tablename__ = 'news_items'
 
     id = Column(Integer, primary_key=True)
     newstext = Column(String)
-    authors = Column(String)
     url = Column(String)
     title = Column(String)
+    authors = Column(String)
     processed = Column(Integer)
 
-class NewsItemEntity(Base):
-    __tablename__ = 'news_items_entities'
+    entities = relationship('Entity', secondary=news_item_entities,
+                            back_populates='news_items')
 
-    id = Column(Integer, primary_key=True)
-    entity_id = Column(Integer, ForeignKey('entities.id'))
-    news_item_id = Column(Integer, ForeignKey('news_items.id'))
-
-    entity = relationship("entity", back_populates="entities")
-    news_item = relationship("news_item", back_populates="news_items")
+    def __init__(self, newstext, url, title, authors, processed):
+        self.newstext = newstext
+        self.url = url
+        self.title = title
+        self.authors = authors
+        self.processed = processed
