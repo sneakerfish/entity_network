@@ -2,7 +2,8 @@ import sqlalchemy, json, spacy, random, glob, re
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import Entity, NewsItem
-from neomodel import StructuredNode, StringProperty, Relationship, RelationshipTo, RelationshipFrom, config
+from neomodel import StructuredNode, StringProperty, IntegerProperty, \
+    Relationship, RelationshipTo, RelationshipFrom, config
 
 
 db_string = "postgresql://postgres:postgres@localhost:5432/news"
@@ -30,6 +31,7 @@ class ProdEntity(StructuredNode):
 class NewsItemNode(StructuredNode):
     url = StringProperty(unique_index=True)
     title = StringProperty()
+    db_id = IntegerProperty()
     people = Relationship('PersonEntity', 'RELATED_TO')
     places = Relationship('GeoEntity', 'RELATED_TO')
     orgs = Relationship('OrgEntity', 'RELATED_TO')
@@ -52,7 +54,8 @@ def add_entities(session):
 def add_news_items(session):
     for item in session.query(NewsItem):
         news_item = NewsItemNode(url=item.url,
-                                 title=item.title[0:50]).save()
+                                 title=item.title[0:50],
+                                 db_id=item.id).save()
         for entity in item.entities:
             if entity.entity_type == "PERSON":
                 person = PersonEntity.nodes.filter(entity_name=entity.entity_name)[0]
