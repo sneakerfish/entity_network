@@ -25,6 +25,7 @@ def geo_replace_abbreviation(entity):
     abbrev["U.S.A."] = "the United States"
     abbrev["united states"] = "the United States"
     abbrev["America"] = "the United States"
+    abbrev["the US"] = "the United States"
 
     def helper(x):
         if x[0] in abbrev:
