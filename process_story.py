@@ -13,20 +13,28 @@ session = Session()
 nlp = spacy.load("en_core_web_lg")
 
 def geo_replace_abbreviation(entity):
+    # Look up entity in a list of abbreviations of US states (obtained
+    # from a USPS website).  In articles both the two character
+    # abbreviation and the 1960s multiple-letter abbreviations are
+    # used.
     state_abbr = pd.read_csv("state_abbr.csv")
     abbrev = {}
     for i in range(len(state_abbr)):
         abbrev[state_abbr.iloc[i, 5]] = state_abbr.iloc[i, 0]
         abbrev[state_abbr.iloc[i, 3]] = state_abbr.iloc[i, 0]
+    # I found multiple representations of the United States.  Try
+    # to standardize them here.
     abbrev["U.S"] = "the United States"
     abbrev["U.S."] = "the United States"
     abbrev["US"] = "the United States"
+    abbrev["us"] = "the United States"
     abbrev["USA"] = "the United States"
     abbrev["U.S.A."] = "the United States"
     abbrev["united states"] = "the United States"
     abbrev["America"] = "the United States"
     abbrev["the US"] = "the United States"
 
+    # Use a helper function to avoid reading the file multiple times.
     def helper(x):
         if x[0] in abbrev:
             return (abbrev[x[0]], x[1])
@@ -35,8 +43,13 @@ def geo_replace_abbreviation(entity):
     return helper(entity)
 
 
-
 def find_entities(text):
+    # Process the given text using Spacy Large English model (en_core_web_lg).  Extract the unique
+    # entities from the processed Spacy version of the text.  Separate entities in to people, places
+    # and other entities.  For people, articles often mention the full name the first time a subject
+    # is mentioned and then just the last name or an article and the last name thereafter.  Make
+    # an attempt to reconcile this.  For Geographic entities, expand abbreviations for US and US
+    # States.  More could probably be done here depending on the specifics of the corpus.
     doc = nlp(text)
     entities = {(str(t.text), t.label_) for t in doc.ents if t.label_ in ["ORG", "PRODUCT", "PERSON", "WORK_OF_ART", "GPE"]}
     people = list({item for item in entities if item[1] == "PERSON"})
@@ -64,14 +77,25 @@ def check_url(url, session):
     return item != None
 
 def find_entity(entity_name, entity_type, session):
+    """Find the given entity name and type if they exist.  Return None, otherwise."""
     entity = session.query(Entity).filter_by(entity_name=entity_name, entity_type=entity_type).first()
     return entity
 
 def process_news_file(filename, session):
+    # Process a single JSON news file.  The JSON is expected to have the following attributes:
+    #   url - the URL for the story; it will be shortened to 500 characters to fit in the database.
+    #   text - the full text of the article.  Sometimes, the Python Newspaper library is unable to
+    #       fetch the text; in that case, do not add it to the database.
+    #  authors - a list of authors if it was able to be extracted by the Newspaper library.
+    #  title - The title of the article.  This will be shown in the Neo4J database.
+    # All fields will be saved to the Postgres database.  If the "text" field is empty, the story
+    # is not saved.
     with open(filename) as json_file:
         data = json.load(json_file)
     if not(data['url']) or check_url(data['url'], session) or data['text']=="":
         return False
+
+    # Print out the URL so the user can see something
     print(data['url'])
     entities = find_entities(data['text'])
     sp_pat = re.compile("\\s+")

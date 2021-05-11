@@ -15,18 +15,23 @@ config.DATABASE_URL = "neo4j://neo4j:neo4j@localhost:7687"
 
 class PersonEntity(StructuredNode):
     entity_name = StringProperty(unique_index=True)
+    db_id = IntegerProperty()
 
 class GeoEntity(StructuredNode):
     entity_name = StringProperty(unique_index=True)
+    db_id = IntegerProperty()
 
 class OrgEntity(StructuredNode):
     entity_name = StringProperty(unique_index=True)
+    db_id = IntegerProperty()
 
 class ArtEntity(StructuredNode):
     entity_name = StringProperty(unique_index=True)
+    db_id = IntegerProperty()
 
 class ProdEntity(StructuredNode):
     entity_name = StringProperty(unique_index=True)
+    db_id = IntegerProperty()
 
 class NewsItemNode(StructuredNode):
     url = StringProperty(unique_index=True)
@@ -41,15 +46,15 @@ class NewsItemNode(StructuredNode):
 def add_entities(session):
     for entity in session.query(Entity):
         if entity.entity_type == "PERSON":
-            graph_entity = PersonEntity(entity_name=entity.entity_name).save()
+            graph_entity = PersonEntity(entity_name=entity.entity_name, db_id=entity.id).save()
         elif entity.entity_type == "ORG":
-            graph_entity = OrgEntity(entity_name=entity.entity_name).save()
+            graph_entity = OrgEntity(entity_name=entity.entity_name, db_id=entity.id).save()
         elif entity.entity_type == "PRODUCT":
-            graph_entity = ProdEntity(entity_name=entity.entity_name).save()
+            graph_entity = ProdEntity(entity_name=entity.entity_name, db_id=entity.id).save()
         elif entity.entity_type == "WORK_OF_ART":
-            graph_entity = ArtEntity(entity_name=entity.entity_name).save()
+            graph_entity = ArtEntity(entity_name=entity.entity_name, db_id=entity.id).save()
         else:
-            graph_entity = GeoEntity(entity_name=entity.entity_name).save()
+            graph_entity = GeoEntity(entity_name=entity.entity_name, db_id=entity.id).save()
 
 def add_news_items(session):
     for item in session.query(NewsItem):
