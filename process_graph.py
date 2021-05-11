@@ -11,7 +11,7 @@ engine = create_engine(db_string)
 Session = sessionmaker(bind=engine)
 session = Session()
 
-config.DATABASE_URL = "neo4j://neo4j:inq6mth@localhost:7687"
+config.DATABASE_URL = "neo4j://neo4j:neo4j@localhost:7687"
 
 class PersonEntity(StructuredNode):
     entity_name = StringProperty(unique_index=True)
