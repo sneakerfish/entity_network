@@ -23,10 +23,14 @@ class TestGeoReplaceAbbreviations(unittest.TestCase):
     def test_different_replacement(self):
         assert geo_replace_abbreviation(("CA", "GPE")) == ("California", "GPE")
     def test_usa1(self):
-        assert geo_replace_abbreviation(("USA", "GPE")) == ("the United States", "GPE")
+        assert geo_replace_abbreviation(("USA", "GPE")) == ("United States", "GPE")
     def test_usa2(self):
-        assert geo_replace_abbreviation(("US", "GPE")) == ("the United States", "GPE")
+        assert geo_replace_abbreviation(("US", "GPE")) == ("United States", "GPE")
     def test_usa3(self):
-        assert geo_replace_abbreviation(("U.S.", "GPE")) == ("the United States", "GPE")
+        assert geo_replace_abbreviation(("U.S.", "GPE")) == ("United States", "GPE")
     def test_usa4(self):
-        assert geo_replace_abbreviation(("U.S.A.", "GPE")) == ("the United States", "GPE")
+        assert geo_replace_abbreviation(("U.S.A.", "GPE")) == ("United States", "GPE")
+    def test_usa5(self):
+        assert geo_replace_abbreviation(("the United States", "GPE")) == ("United States", "GPE")
+    def test_china(self):
+        assert geo_replace_abbreviation(("People's Republic of China", "GPE")) == ("China", "GPE")

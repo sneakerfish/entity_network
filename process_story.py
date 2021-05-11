@@ -24,15 +24,23 @@ def geo_replace_abbreviation(entity):
         abbrev[state_abbr.iloc[i, 3]] = state_abbr.iloc[i, 0]
     # I found multiple representations of the United States.  Try
     # to standardize them here.
-    abbrev["U.S"] = "the United States"
-    abbrev["U.S."] = "the United States"
-    abbrev["US"] = "the United States"
-    abbrev["us"] = "the United States"
-    abbrev["USA"] = "the United States"
-    abbrev["U.S.A."] = "the United States"
-    abbrev["united states"] = "the United States"
-    abbrev["America"] = "the United States"
-    abbrev["the US"] = "the United States"
+    abbrev["the United States"] = "United States"
+    abbrev["The United States"] = "United States"
+    abbrev["U.S"] = "United States"
+    abbrev["U.S."] = "United States"
+    abbrev["US"] = "United States"
+    abbrev["us"] = "United States"
+    abbrev["USA"] = "United States"
+    abbrev["U.S.A."] = "United States"
+    abbrev["united states"] = "United States"
+    abbrev["America"] = "United States"
+    abbrev["the US"] = "United States"
+    abbrev["People's Republic of China"] = "China"
+    abbrev["South Korea"] = "Korea"
+    abbrev["BC"] = "British Columbia"
+    abbrev["EU"] = "European Union"
+    abbrev["E.U."] = "European Union"
+    abbrev["GDR"] = "Germany"
 
     # Use a helper function to avoid reading the file multiple times.
     def helper(x):
