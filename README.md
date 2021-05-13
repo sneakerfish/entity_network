@@ -30,3 +30,33 @@ bring up both servers with the command: `docker-compose up`  You'll get an error
 if you have a server running aready on ports 5432 (Postgres) or 7474 (Neo4J)
 on the machine where you run this.  Also, I am running Python through a virtual
 environment outside the Docker instance.
+
+## Setup
+
+Clone the project to a directory.  In one terminal, change to the new
+directory (I'm assuming it is `entity_network`) and enter the following command:
+
+```
+cd entity_network
+docker-compose up
+```
+
+In a separate terminal, change to the new directory and enter the
+following commands:
+
+```
+cd entity_network
+docker exec -i entity_network_db_1 psql -Upostgres < create_db.sql
+docker exec -i entity_network_db_1 psql -Upostgres  news  < create_tables.sql
+python collect_data.py
+python process_story.py
+python process_graph.py
+```
+
+
+After you do this, you will have a small graph database to play around
+with.  As long as the Docker images are running, you can point your
+browser to ```http://localhost:7474``` and you should be able to log
+in.  The first time you log in you will be asked to change the
+password for the user `neo4j`.  Please leave it at `neo4j`, since it
+is used within the `process_graph.py` code.
