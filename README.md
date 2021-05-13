@@ -60,3 +60,26 @@ browser to ```http://localhost:7474``` and you should be able to log
 in.  The first time you log in you will be asked to change the
 password for the user `neo4j`.  Please leave it at `neo4j`, since it
 is used within the `process_graph.py` code.
+
+Here are some example of queries and results I got with a data set of
+more than 2000 stories.
+
+```
+match (us:GeoEntity {entity_name: "United States"}),
+(ru:GeoEntity {entity_name: 'Russia'}),
+(us)<-[:RELATED_TO]-(s:NewsItemNode)-[:RELATED_TO]->(ru)
+return us, ru, s;
+```
+
+Stories mentioning both the United States and Russia.
+
+![Stories mentioning US and Russia](images/neo4j_image1.png)
+
+```
+match (n:OrgEntity {entity_name: 'Harvard'})<-[r:RELATED_TO]-(s) return n, r, s;
+
+```
+
+Stories mentioning Harvard
+
+![Stories mentioning Harvard](images/neo4j_image2.png)
