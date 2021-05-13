@@ -83,3 +83,15 @@ match (n:OrgEntity {entity_name: 'Harvard'})<-[r:RELATED_TO]-(s) return n, r, s;
 Stories mentioning Harvard
 
 ![Stories mentioning Harvard](images/neo4j_image2.png)
+
+
+```
+match (fb:OrgEntity {entity_name:"Facebook"})<-[r]-(s)-[r1]->(g:GeoEntity)
+where g.entity_name <> "United States"
+return fb,s,g
+```
+
+Stories mentioning Facebook and the geographic entities mentioned in
+those stories that are not the United States.
+
+![Stories mentioning Facebook](images/neo4j_image4.png)
